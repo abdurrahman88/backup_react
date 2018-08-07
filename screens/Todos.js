@@ -7,17 +7,16 @@ import {
 } from 'native-base';
 import {FlatList} from 'react-native';
 import TodoItem from '../components/TodoItem';
+// import TryRedux from '../components/TryRedux';
+import {connect} from 'react-redux';
+import {allTodos} from '../actions';
 
-export default class Todos extends Component{
+class Todos extends Component{
 
-  constructor(){
-    super();
-    this.state = {
-      count: 0,
-      todos: []
-    };
+  componentDidMount(){
+    this.props.dispatch(allTodos());
   }
-  
+
   _keyExtractor = (item, index) => item.id;
 
 
@@ -28,7 +27,7 @@ export default class Todos extends Component{
         <Content style={{backgroundColor: '#86c4c6'}}>
           <List>
             <FlatList
-              data={this.state.todos}
+              data={this.props.todosReducer.todos}
               keyExtractor={this._keyExtractor}
               renderItem={({item}) => <TodoItem todo={item}/>}
             />
@@ -37,7 +36,7 @@ export default class Todos extends Component{
         </Content>
 
         <Fab
-          style={{ backgroundColor: '#5067FF' }}
+          style={{ backgroundColor: '#8a969d' }}
           position="bottomRight"
           onPress={() => this.props.navigation.navigate('TodosCreate') }>
           <Icon name="add" />
@@ -47,3 +46,9 @@ export default class Todos extends Component{
     );
   }
 }
+
+
+const mapStateToProps = (state)=>({
+  todosReducer: state.todosReducer
+});
+export default connect(mapStateToProps)(Todos)

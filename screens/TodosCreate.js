@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
 import {Container, Content, Text, Form, Input, Item, Label, Button} from 'native-base';
+import {StyleSheet} from 'react-native';
+import axios from 'axios';
+import {connect} from 'react-redux';
+import {API_URL} from '../constans';
+import {allTodos} from '../actions';
 
-export default class TodosCreate extends Component{
+class TodosCreate extends Component{
   constructor() {
     super();
     this.state = {
@@ -20,7 +25,17 @@ export default class TodosCreate extends Component{
   }
 
   handleSubmit(){
-    alert(this.state.text);
+    const text = this.state.text;
+    const {goBack} = this.props.navigation;
+
+    if (text) {
+      axios.post(`${API_URL}/todos`, {
+        name: text
+      }).then(()=>{
+        this.props.dispatch(allTodos());
+        goBack();
+      })
+    }
   }
 
   render(){
@@ -37,12 +52,28 @@ export default class TodosCreate extends Component{
               <Label>Not To Do</Label>
               <Input onChangeText={(text) => this.setState({text})}/>
             </Item>
-            <Button full primary onPress={()=> this.handleSubmit()}>
-              <Text>Submit</Text>
-            </Button>
           </Form>
         </Content>
+        <Button full success onPress={()=> this.handleSubmit()} style={styles.btnFooter}>
+          <Text>Submit</Text>
+        </Button>
       </Container>
     )
   }
 }
+
+const mapStateToProps = (state)=>({
+
+});
+
+export default connect(mapStateToProps)(TodosCreate);
+
+const styles = StyleSheet.create({
+  btnFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#26de96'
+  }
+})
